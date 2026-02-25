@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CyberBanner | 赛博弹幕</title>
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+        /* 弹幕轨道 */
+        .marquee-container {
+            display: flex; align-items: center; height: 100vh; white-space: nowrap; overflow: hidden;
+        }
+        /* 滚动文字 */
+        .marquee-text {
+            font-size: 80vh; font-weight: bold; color: #00ff9d;
+            display: inline-block; padding-left: 100vw;
+            animation: scroll linear infinite;
+        }
+        @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+        /* 控制面板 */
+        #panel {
+            position: fixed; top: 10px; left: 10px; right: 10px;
+            background: rgba(30, 30, 30, 0.8); padding: 15px; border-radius: 10px;
+            z-index: 100; transition: opacity 0.3s;
+        }
+        input, select { margin-bottom: 10px; width: 100%; padding: 8px; box-sizing: border-box; }
+        .hide { opacity: 0; pointer-events: none; }
+    </style>
+</head>
+<body onclick="togglePanel()">
+    <div id="panel" onclick="event.stopPropagation()">
+        <input type="text" id="txt" placeholder="输入文字..." oninput="update()">
+        <input type="color" id="color" value="#00ff9d" onchange="update()">
+        <select id="speed" onchange="update()">
+            <option value="15">速度：中等</option>
+            <option value="25">速度：缓慢</option>
+            <option value="5">速度：极快</option>
+        </select>
+        <div style="color: #ccc; font-size: 12px;">点击空白处隐藏/显示设置</div>
+    </div>
+    <div class="marquee-container">
+        <div id="display" class="marquee-text">请在上方输入...</div>
+    </div>
+
+    <script>
+        function update() {
+            const d = document.getElementById('display');
+            d.innerText = document.getElementById('txt').value || "请在上方输入...";
+            d.style.color = document.getElementById('color').value;
+            d.style.animationDuration = document.getElementById('speed').value + 's';
+        }
+        function togglePanel() { document.getElementById('panel').classList.toggle('hide'); }
+        
+        // 保持屏幕常亮
+        if ('wakeLock' in navigator) {
+            navigator.wakeLock.request('screen').catch(err => console.log('常亮失效'));
+        }
+    </script>
+</body>
+</html>
